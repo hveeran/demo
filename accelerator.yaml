@@ -1,0 +1,53 @@
+accelerator:
+  displayName: liquibase app template
+  description: A sample liquibase app
+  tags:
+  - java
+  - spring
+  - liquibase
+  options:
+  - name: name
+    inputType: text
+    label: Name of your Project
+    required: true
+  - name: groupId
+    inputType: select
+    label: Organization
+    choices:
+    - text: "example"
+      value: com.example
+    required: true
+  - name: buildType
+    label: Build Type
+    description: Choose whether to use Maven or Gradle to build the project.
+    dataType: string
+    inputType: select
+    choices:
+      - value: Gradle
+        text: Gradle (build.gradle)
+    required: true
+
+engine:
+  let:
+    - name: pkgName
+      expression: "#groupId+'.'+#name"
+  merge:
+  - include: ["**/*.java"]
+    chain:
+      - type: ReplaceText
+        regex:
+          pattern: com.example.demo
+          with: "#pkgName"
+      - type: ReplaceText
+        regex:
+          pattern: com.example
+          with: "#groupId"
+      - type: RewritePath
+        regex: src/main/java/com/example/demo/(.*)
+        rewriteTo: "'src/main/java/' + #pkgName.replace('.', '/') + '/' + #g1"
+  - include: ["**/*.properties"]
+    chain:
+      - type: ReplaceText
+        regex:
+          pattern: example
+          with: "#name"
