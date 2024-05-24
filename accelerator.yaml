@@ -6,10 +6,6 @@ accelerator:
     - spring
     - liquibase
   options:
-    - name: name
-      inputType: text
-      label: Name of your Project
-      required: true
     - name: groupId
       inputType: select
       label: Organization
@@ -30,7 +26,7 @@ accelerator:
 engine:
   let:
     - name: pkgName
-      expression: "#groupId+'.'+#name"
+      expression: "#groupId+'.'+#artifactId"
   merge:
     - include: ["**/*.java"]
       chain:
@@ -50,4 +46,4 @@ engine:
         - type: ReplaceText
           regex:
             pattern: example
-            with: "#name"
+            with: "#artifactId"
